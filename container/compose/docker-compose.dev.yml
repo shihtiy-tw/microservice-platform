@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      args:
+        ENVIRONMENT: dev
+    volumes:
+      - ../../backend:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../../.env.dev
+    environment:
+      - DJANGO_ENV=dev
+
+  frontend:
+    build:
+      args:
+        ENVIRONMENT: development
+      target: development
+    volumes:
+      - ../../frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    env_file:
+      - ../../.env.dev
+
+  server:
+    build:
+      args:
+        ENVIRONMENT: dev
+    ports:
+      - "80:80"
+    env_file:
+      - ../../.env.dev
+
+  db:
+    build:
+      args:
+        ENVIRONMENT: dev
+    env_file:
+      - ../../.env.dev
+    environment:
+      - MYSQL_DATABASE=app_db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_ENV=dev
+    ports:
+      - "3306:3306"
+
+  cache:
+    build:
+      args:
+        ENVIRONMENT: dev
+    env_file:
+      - ../../.env.dev
+    environment:
+      - REDIS_ENV=dev
+    ports:
+      - "6379:6379"

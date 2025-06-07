@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      args:
+        ENVIRONMENT: test
+    env_file:
+      - ../../.env.test
+    environment:
+      - DJANGO_ENV=test
+
+  frontend:
+    build:
+      args:
+        ENVIRONMENT: test
+      target: builder
+    env_file:
+      - ../../.env.test
+
+  server:
+    build:
+      args:
+        ENVIRONMENT: test
+    env_file:
+      - ../../.env.test
+
+  db:
+    build:
+      args:
+        ENVIRONMENT: test
+    env_file:
+      - ../../.env.test
+    environment:
+      - MYSQL_DATABASE=test_db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_ENV=test
+    tmpfs:
+      - /var/lib/mysql
+
+  cache:
+    build:
+      args:
+        ENVIRONMENT: test
+    env_file:
+      - ../../.env.test
+    environment:
+      - REDIS_ENV=test

@@ -1,0 +1,11 @@
+# Main docker-compose file that extends the base and dev configurations
+version: '3.8'
+
+# This file is a convenience wrapper that combines the base and dev configurations
+# for local development. It allows you to simply run 'docker-compose up' from the
+# project root directory.
+
+# Import the base and dev configurations
+include:
+  - container/compose/docker-compose.base.yml
+  - container/compose/docker-compose.dev.yml

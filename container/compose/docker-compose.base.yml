@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+    depends_on:
+      - db
+      - cache
+
+  frontend:
+    build:
+      context: ../../frontend
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+
+  server:
+    build:
+      context: ../../server
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+    depends_on:
+      - backend
+      - frontend
+
+  db:
+    build:
+      context: ../../database
+      dockerfile: Dockerfile
+    volumes:
+      - ../../database/data:/var/lib/mysql
+      - ../../database/conf/${ENVIRONMENT:-dev}:/etc/mysql/conf.d
+      - ../../database/init:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cache:
+    build:
+      context: ../../cache
+      dockerfile: Dockerfile
+    volumes:
+      - ../../cache/data:/data
+      - ../../cache/conf/${ENVIRONMENT:-dev}:/usr/local/etc/redis
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
